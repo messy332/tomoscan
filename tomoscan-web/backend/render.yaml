@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: tomoscan-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true          # Render auto-generates a secure value
+      - key: DATABASE_URL
+        sync: false                  # You paste this from Supabase manually
+      - key: ALLOWED_ORIGINS
+        value: '["https://your-app.vercel.app"]'
+      - key: DEBUG
+        value: "false"

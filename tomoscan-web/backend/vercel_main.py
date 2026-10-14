@@ -1,3 +1,4 @@
+import json
 import os
 
 from fastapi import FastAPI, Request
@@ -8,13 +9,20 @@ from app.api.routes import classifier
 
 app = FastAPI(title="TomoScan Classifier API", version="1.0.0", docs_url=None, redoc_url=None)
 
+def _parse_origins(raw: str) -> list[str]:
+    raw = raw.strip()
+    try:
+        parsed = json.loads(raw)
+        if isinstance(parsed, list):
+            return [o.strip() for o in parsed if o.strip()]
+    except (json.JSONDecodeError, ValueError):
+        pass
+    return [o.strip() for o in raw.split(",") if o.strip()]
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        origin.strip()
-        for origin in os.getenv("ALLOWED_ORIGINS", "*").split(",")
-        if origin.strip()
-    ],
+    allow_origins=_parse_origins(os.getenv("ALLOWED_ORIGINS", "*")),
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],

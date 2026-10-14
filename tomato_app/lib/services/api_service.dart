@@ -3,11 +3,15 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'auth_service.dart';
 
-/// Change this to your Railway backend URL after deploying.
-/// For local dev use: http://10.0.2.2:8000/api/v1  (Android emulator)
+/// Backend URL resolution order:
+/// 1. --dart-define=API_BASE_URL=https://... at build time
+/// 2. Your Railway/Render deployed URL (update _kProdUrl below)
+/// 3. Android emulator localhost fallback for local dev
+const String _kProdUrl = ''; // TODO: paste your Railway URL here e.g. 'https://tomoscan-api.up.railway.app/api/v1'
+
 const String kBaseUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'http://10.0.2.2:8000/api/v1',
+  defaultValue: _kProdUrl != '' ? _kProdUrl : 'http://10.0.2.2:8000/api/v1',
 );
 
 class ApiException implements Exception {

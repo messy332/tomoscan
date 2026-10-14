@@ -7,7 +7,12 @@ const nextConfig = {
     ],
   },
   async rewrites() {
-    const backendUrl = process.env.BACKEND_URL || "https://tomoscan-v6ba.vercel.app";
+    const backendUrl = process.env.BACKEND_URL && process.env.BACKEND_URL !== "undefined"
+      ? process.env.BACKEND_URL
+      : null;
+
+    if (!backendUrl) return [];
+
     return [
       {
         source: "/api/v1/:path*",

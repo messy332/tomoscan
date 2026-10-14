@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "vercel_main.py",
-      "use": "@vercel/python"
-    }
-  ],
   "routes": [
     {
       "src": "/(.*)",
@@ -14,6 +8,7 @@
   ],
   "functions": {
     "vercel_main.py": {
+      "runtime": "vercel-python@4",
       "includeFiles": "app/ml/models/*.joblib"
     }
   },

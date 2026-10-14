@@ -1,5 +1,7 @@
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+from typing import Any
+import json
 
 
 class Settings(BaseSettings):
@@ -15,14 +17,27 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     # Database (Supabase PostgreSQL)
-    DATABASE_URL: str  # postgresql://user:pass@host:5432/db
+    DATABASE_URL: str
 
-    # CORS
-    ALLOWED_ORIGINS: list[str] = ["http://localhost:3000"]
+    # CORS — accepts a JSON array string OR a comma-separated string
+    ALLOWED_ORIGINS: Any = ["http://localhost:3000"]
 
     # File Upload
     MAX_FILE_SIZE_MB: int = 5
     ALLOWED_EXTENSIONS: set[str] = {"jpg", "jpeg", "png", "webp"}
+
+    def get_allowed_origins(self) -> list[str]:
+        v = self.ALLOWED_ORIGINS
+        if isinstance(v, list):
+            return v
+        try:
+            parsed = json.loads(v)
+            if isinstance(parsed, list):
+                return parsed
+        except (ValueError, TypeError):
+            pass
+        # comma-separated fallback
+        return [o.strip() for o in str(v).split(",") if o.strip()]
 
     class Config:
         env_file = ".env"

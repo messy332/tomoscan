@@ -39,6 +39,7 @@ dependencies:
   http: ^1.2.2                # REST API calls
   shared_preferences: ^2.3.2  # persist JWT tokens locally
   flutter_secure_storage: ^9.2.2  # secure token storage
+  supabase_flutter: ^2.18.3
 
 dev_dependencies:
   flutter_test:

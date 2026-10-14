@@ -1,18 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'auth_service.dart';
 
-/// Backend URL resolution order:
-/// 1. --dart-define=API_BASE_URL=https://... at build time
-/// 2. Your Railway/Render deployed URL (update _kProdUrl below)
-/// 3. Android emulator localhost fallback for local dev
-const String _kProdUrl = 'https://tomoscan-api.onrender.com/api/v1';
-
-const String kBaseUrl = String.fromEnvironment(
-  'API_BASE_URL',
-  defaultValue: _kProdUrl != '' ? _kProdUrl : 'http://10.0.2.2:8000/api/v1',
-);
+const String _classifierApiUrl = String.fromEnvironment('CLASSIFIER_API_URL');
 
 class ApiException implements Exception {
   final String message;
@@ -26,53 +16,16 @@ class ApiService {
   ApiService._();
   static final ApiService instance = ApiService._();
 
-  Future<Map<String, String>> _headers({bool auth = true}) async {
-    final headers = <String, String>{'Content-Type': 'application/json'};
-    if (auth) {
-      final token = await AuthService.instance.getAccessToken();
-      if (token != null) headers['Authorization'] = 'Bearer $token';
+  Future<Map<String, dynamic>> classifyImage(File imageFile, String accessToken) async {
+    if (_classifierApiUrl.isEmpty) {
+      throw ApiException('Classifier API is not configured.');
     }
-    return headers;
-  }
-
-  Map<String, dynamic> _parse(http.Response res) {
-    final body = jsonDecode(res.body) as Map<String, dynamic>;
-    if (res.statusCode >= 400) {
-      throw ApiException(body['detail']?.toString() ?? 'Request failed', res.statusCode);
-    }
-    return body;
-  }
-
-  // ── Auth ──────────────────────────────────────────────────────────────────
-
-  Future<Map<String, dynamic>> login(String email, String password) async {
-    final res = await http.post(
-      Uri.parse('$kBaseUrl/auth/login'),
-      headers: await _headers(auth: false),
-      body: jsonEncode({'email': email, 'password': password}),
+    final uri = Uri.parse(
+      '${_classifierApiUrl.replaceFirst(RegExp(r'/+$'), '')}/api/v1/scans/classify',
     );
-    return _parse(res);
-  }
-
-  Future<Map<String, dynamic>> register(
-      String fullName, String email, String password) async {
-    final res = await http.post(
-      Uri.parse('$kBaseUrl/auth/register'),
-      headers: await _headers(auth: false),
-      body: jsonEncode({'full_name': fullName, 'email': email, 'password': password}),
-    );
-    return _parse(res);
-  }
-
-  // ── Scans ─────────────────────────────────────────────────────────────────
-
-  /// Upload image to backend — returns full comparison result.
-  Future<Map<String, dynamic>> classifyImage(File imageFile) async {
-    final token = await AuthService.instance.getAccessToken();
-    final uri = Uri.parse('$kBaseUrl/scans/classify');
 
     final request = http.MultipartRequest('POST', uri)
-      ..headers['Authorization'] = 'Bearer $token'
+      ..headers['Authorization'] = 'Bearer $accessToken'
       ..files.add(await http.MultipartFile.fromPath('file', imageFile.path));
 
     final streamed = await request.send();
@@ -83,14 +36,5 @@ class ApiService {
       throw ApiException(body['detail']?.toString() ?? 'Classification failed', res.statusCode);
     }
     return body;
-  }
-
-  Future<List<dynamic>> getHistory({int skip = 0, int limit = 20}) async {
-    final res = await http.get(
-      Uri.parse('$kBaseUrl/scans/history?skip=$skip&limit=$limit'),
-      headers: await _headers(),
-    );
-    if (res.statusCode >= 400) throw ApiException('Failed to load history', res.statusCode);
-    return jsonDecode(res.body) as List<dynamic>;
   }
 }

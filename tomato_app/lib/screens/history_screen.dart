@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
+import '../services/scan_service.dart';
 import '../models/scan_result.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -24,12 +24,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Future<void> _load() async {
     setState(() { _loading = true; _error = null; });
     try {
-      final raw = await ApiService.instance.getHistory();
+      final raw = await ScanService.instance.getHistory();
       setState(() {
         _items = raw.map((e) => HistoryItem.fromJson(e as Map<String, dynamic>)).toList();
       });
-    } on ApiException catch (e) {
-      setState(() => _error = e.message);
     } catch (_) {
       setState(() => _error = 'Could not load history. Are you connected?');
     } finally {
@@ -94,7 +92,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       child: ListView.separated(
                         padding: const EdgeInsets.all(16),
                         itemCount: _items.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 10),
+                        separatorBuilder: (_, _) => const SizedBox(height: 10),
                         itemBuilder: (_, i) {
                           final item = _items[i];
                           return Container(

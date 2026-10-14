@@ -19,6 +19,10 @@ class Settings(BaseSettings):
     # Database (Supabase PostgreSQL)
     DATABASE_URL: str
 
+    # Supabase — used by /scans/classify to validate Flutter app tokens
+    SUPABASE_URL: str = ""
+    SUPABASE_PUBLISHABLE_KEY: str = ""
+
     # CORS — accepts a JSON array string OR a comma-separated string
     ALLOWED_ORIGINS: Any = ["http://localhost:3000"]
 

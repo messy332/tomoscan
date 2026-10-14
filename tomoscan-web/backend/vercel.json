@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "vercel_main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "vercel_main.py"
+    }
+  ],
+  "functions": {
+    "vercel_main.py": {
+      "includeFiles": "app/ml/models/*.joblib"
+    }
+  },
+  "env": {
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_PUBLISHABLE_KEY": "@supabase_publishable_key",
+    "SECRET_KEY": "@secret_key",
+    "DATABASE_URL": "@database_url"
+  }
+}

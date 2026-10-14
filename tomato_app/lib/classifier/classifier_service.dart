@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/scan_result.dart';
 import '../services/api_service.dart';
 import '../services/auth_service.dart';
+import '../services/scan_service.dart';
 import 'feature_extractor.dart';
 import 'random_forest.dart' as rf_model;
 
@@ -19,8 +21,10 @@ class ClassifierService {
 
     if (loggedIn) {
       try {
-        final data = await ApiService.instance.classifyImage(imageFile);
-        return ScanResult.fromJson(data);
+        final token = Supabase.instance.client.auth.currentSession?.accessToken;
+        if (token == null) throw StateError('Your session has expired.');
+        final data = await ApiService.instance.classifyImage(imageFile, token);
+        return await ScanService.instance.saveClassification(data);
       } catch (e) {
         // Network error → fall back to offline
         return _classifyOffline(imageFile);
@@ -31,7 +35,6 @@ class ClassifierService {
   }
 
   Future<ScanResult> _classifyOffline(File imageFile) async {
-    final bytes = await imageFile.readAsBytes();
     final features = await extractFeatures(imageFile);
 
     final t0 = DateTime.now();

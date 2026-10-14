@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/auth_service.dart';
-import '../../services/api_service.dart';
 import '../home_screen.dart';
 import 'register_screen.dart';
 
@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (_) => const HomeScreen()));
-    } on ApiException catch (e) {
+    } on AuthException catch (e) {
       _showError(e.message);
     } catch (_) {
       _showError('Login failed. Check your connection.');

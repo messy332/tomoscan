@@ -6,11 +6,6 @@ import time
 import pathlib
 import numpy as np
 import joblib
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import (
-    accuracy_score, classification_report, confusion_matrix
-)
-import pandas as pd
 
 CLASSES = ["unripe", "ripe", "overripe"]
 MODEL_DIR = pathlib.Path(__file__).parent / "models"
@@ -60,8 +55,10 @@ def get_evaluation_report() -> dict:
     Runs full evaluation on the training CSV with 5-fold CV.
     Returns accuracy, per-class metrics, confusion matrices, CV scores.
     """
-    import pandas as pd
     from pathlib import Path
+    import pandas as pd
+    from sklearn.model_selection import cross_val_score
+    from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
     csv_path = MODEL_DIR / "tomato_features.csv"
     if not csv_path.exists():

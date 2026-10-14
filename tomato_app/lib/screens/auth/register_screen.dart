@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/auth_service.dart';
-import '../../services/api_service.dart';
 import '../home_screen.dart';
 import 'login_screen.dart';
 
@@ -26,15 +26,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     try {
-      await AuthService.instance.register(
+      final signedIn = await AuthService.instance.register(
         _nameCtrl.text.trim(),
         _emailCtrl.text.trim(),
         _passCtrl.text,
       );
       if (!mounted) return;
+      if (!signedIn) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Check your email to confirm your account, then sign in.')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+        return;
+      }
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (_) => const HomeScreen()));
-    } on ApiException catch (e) {
+    } on AuthException catch (e) {
       _showError(e.message);
     } catch (_) {
       _showError('Registration failed. Check your connection.');

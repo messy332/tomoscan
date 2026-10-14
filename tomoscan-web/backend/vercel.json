@@ -8,7 +8,7 @@
   ],
   "functions": {
     "vercel_main.py": {
-      "runtime": "vercel-python@4",
+      "runtime": "python3.12",
       "includeFiles": "app/ml/models/*.joblib"
     }
   }

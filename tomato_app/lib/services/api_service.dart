@@ -7,7 +7,7 @@ import 'auth_service.dart';
 /// 1. --dart-define=API_BASE_URL=https://... at build time
 /// 2. Your Railway/Render deployed URL (update _kProdUrl below)
 /// 3. Android emulator localhost fallback for local dev
-const String _kProdUrl = ''; // TODO: paste your Railway URL here e.g. 'https://tomoscan-api.up.railway.app/api/v1'
+const String _kProdUrl = 'https://tomoscan-api.onrender.com/api/v1';
 
 const String kBaseUrl = String.fromEnvironment(
   'API_BASE_URL',

@@ -11,13 +11,13 @@ class Settings(BaseSettings):
     API_PREFIX: str = "/api/v1"
 
     # Security
-    SECRET_KEY: str
+    SECRET_KEY: str = "fallback-secret-key-set-this-in-vercel"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     # Database (Supabase PostgreSQL)
-    DATABASE_URL: str
+    DATABASE_URL: str = ""
 
     # Supabase — used by /scans/classify to validate Flutter app tokens
     SUPABASE_URL: str = ""

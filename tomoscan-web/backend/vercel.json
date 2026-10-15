@@ -1,13 +1,7 @@
 {
-  "version": 2,
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "vercel_main.py"
-    }
-  ],
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "vercel_main.py": {
+    "main.py": {
       "includeFiles": "app/ml/models/*.joblib"
     }
   }

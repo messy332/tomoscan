@@ -1,6 +1,5 @@
 import re
 import uuid
-import magic  # python-magic for MIME detection
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Query
 from sqlalchemy.orm import Session
 from ...core.database import get_db
@@ -17,6 +16,21 @@ settings = get_settings()
 
 SAFE_FILENAME = re.compile(r"[^\w.\-]")
 
+# Magic byte signatures for allowed image types
+_MAGIC_BYTES = {
+    b"\xff\xd8\xff": "image/jpeg",
+    b"\x89PNG": "image/png",
+    b"RIFF": "image/webp",  # RIFF....WEBP
+}
+
+def _detect_mime(header: bytes) -> str:
+    if header[:4] == b"RIFF" and header[8:12] == b"WEBP":
+        return "image/webp"
+    for sig, mime in _MAGIC_BYTES.items():
+        if header[:len(sig)] == sig and mime != "image/webp":
+            return mime
+    return "application/octet-stream"
+
 
 def _validate_upload(file: UploadFile, content: bytes):
     # Extension check
@@ -29,7 +43,7 @@ def _validate_upload(file: UploadFile, content: bytes):
         raise HTTPException(400, f"File exceeds {settings.MAX_FILE_SIZE_MB}MB limit")
 
     # MIME type check (real magic bytes, not just extension)
-    mime = magic.from_buffer(content[:2048], mime=True)
+    mime = _detect_mime(content[:12])
     if mime not in {"image/jpeg", "image/png", "image/webp"}:
         raise HTTPException(400, f"Invalid file content: {mime}")
 

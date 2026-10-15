@@ -11,7 +11,12 @@ from .api.routes import auth, scan, admin
 
 settings = get_settings()
 
-# Create all tables (use Alembic migrations in production)
+# Create all tables (deferred to avoid crash if DB is unreachable at startup)
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as e:
+    import logging
+    logging.warning(f"Could not create tables at startup: {e}")
 Base.metadata.create_all(bind=engine)
 
 limiter = Limiter(key_func=get_remote_address)

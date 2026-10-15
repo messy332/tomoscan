@@ -34,6 +34,11 @@ async def generic_exception_handler(request: Request, exc: Exception):
     return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 
+@app.get("/")
+def root():
+    return {"status": "ok", "message": "TomoScan API is running"}
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}

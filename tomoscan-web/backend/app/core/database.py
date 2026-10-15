@@ -5,7 +5,7 @@ from .config import get_settings
 settings = get_settings()
 
 engine = create_engine(
-    settings.DATABASE_URL.replace("postgresql://", "postgresql+psycopg://").replace("postgresql+psycopg2://", "postgresql+psycopg://"),
+    settings.DATABASE_URL,
     pool_pre_ping=True,
     pool_size=5,
     max_overflow=10,

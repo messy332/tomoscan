@@ -19,10 +19,10 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _loading = false;
   String? _userName;
 
-  static const _red      = Color(0xFFE8441A);
-  static const _labels   = ['unripe', 'ripe', 'overripe'];
-  static const _colors   = [Color(0xFF22c55e), _red, Color(0xFF92400e)];
-  static const _emojis   = ['🟢', '🍅', '🟤'];
+  static const _red = Color(0xFFE8441A);
+  static const _labels = ['unripe', 'ripe', 'overripe'];
+  static const _colors = [Color(0xFF22c55e), _red, Color(0xFF92400e)];
+  static const _emojis = ['🟢', '🍅', '🟤'];
 
   @override
   void initState() {
@@ -37,26 +37,42 @@ class _HomeScreenState extends State<HomeScreen> {
     final picked = await picker.pickImage(source: source, imageQuality: 90);
     if (picked == null) return;
 
-    setState(() { _image = File(picked.path); _result = null; _loading = true; });
+    setState(() {
+      _image = File(picked.path);
+      _result = null;
+      _loading = true;
+    });
 
     try {
       final res = await ClassifierService.instance.classify(_image!);
-      setState(() { _result = res; _loading = false; });
+      setState(() {
+        _result = res;
+        _loading = false;
+      });
     } catch (e) {
       setState(() => _loading = false);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red.shade700));
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
     }
   }
 
-  void _reset() => setState(() { _image = null; _result = null; });
+  void _reset() => setState(() {
+    _image = null;
+    _result = null;
+  });
 
   Future<void> _logout() async {
     await AuthService.instance.logout();
     if (!mounted) return;
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (_) => const LandingScreen()));
+      context,
+      MaterialPageRoute(builder: (_) => const LandingScreen()),
+    );
   }
 
   @override
@@ -69,12 +85,23 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('TomoScan',
-                style: TextStyle(color: _red, fontWeight: FontWeight.bold, fontSize: 15)),
+            const Text(
+              'TomoScan',
+              style: TextStyle(
+                color: _red,
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
+            ),
             if (_userName != null)
-              Text('Hello, $_userName',
-                  style: const TextStyle(color: Colors.black87, fontSize: 14,
-                      fontWeight: FontWeight.w600)),
+              Text(
+                'Hello, $_userName',
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
           ],
         ),
         actions: [
@@ -82,7 +109,9 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.history, color: Colors.black54),
             tooltip: 'History',
             onPressed: () => Navigator.push(
-                context, MaterialPageRoute(builder: (_) => const HistoryScreen())),
+              context,
+              MaterialPageRoute(builder: (_) => const HistoryScreen()),
+            ),
           ),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.black54),
@@ -108,8 +137,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   border: Border.all(color: Colors.grey.shade200),
                   boxShadow: [
                     BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 12, offset: const Offset(0, 4)),
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
                   ],
                 ),
                 child: ClipRRect(
@@ -121,9 +152,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             const Text('🍅', style: TextStyle(fontSize: 56)),
                             const SizedBox(height: 10),
-                            Text('Tap to scan a tomato',
-                                style: TextStyle(
-                                    color: Colors.grey.shade400, fontSize: 15)),
+                            Text(
+                              'Tap to scan a tomato',
+                              style: TextStyle(
+                                color: Colors.grey.shade400,
+                                fontSize: 15,
+                              ),
+                            ),
                           ],
                         ),
                 ),
@@ -135,9 +170,21 @@ class _HomeScreenState extends State<HomeScreen> {
             // Pick buttons
             Row(
               children: [
-                Expanded(child: _pickBtn(Icons.camera_alt, 'Camera', ImageSource.camera)),
+                Expanded(
+                  child: _pickBtn(
+                    Icons.camera_alt,
+                    'Camera',
+                    ImageSource.camera,
+                  ),
+                ),
                 const SizedBox(width: 12),
-                Expanded(child: _pickBtn(Icons.photo_library, 'Gallery', ImageSource.gallery)),
+                Expanded(
+                  child: _pickBtn(
+                    Icons.photo_library,
+                    'Gallery',
+                    ImageSource.gallery,
+                  ),
+                ),
               ],
             ),
 
@@ -149,8 +196,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     CircularProgressIndicator(color: _red),
                     SizedBox(height: 12),
-                    Text('Classifying tomato…',
-                        style: TextStyle(color: Colors.grey, fontSize: 13)),
+                    Text(
+                      'Classifying tomato…',
+                      style: TextStyle(color: Colors.grey, fontSize: 13),
+                    ),
                   ],
                 ),
               ),
@@ -175,7 +224,9 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: _red,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 13),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
         ),
       );
 
@@ -183,7 +234,8 @@ class _HomeScreenState extends State<HomeScreen> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (_) => Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -192,12 +244,18 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               leading: const Icon(Icons.camera_alt, color: _red),
               title: const Text('Camera'),
-              onTap: () { Navigator.pop(context); _pick(ImageSource.camera); },
+              onTap: () {
+                Navigator.pop(context);
+                _pick(ImageSource.camera);
+              },
             ),
             ListTile(
               leading: const Icon(Icons.photo_library, color: _red),
               title: const Text('Gallery'),
-              onTap: () { Navigator.pop(context); _pick(ImageSource.gallery); },
+              onTap: () {
+                Navigator.pop(context);
+                _pick(ImageSource.gallery);
+              },
             ),
           ],
         ),
@@ -224,8 +282,10 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Icon(Icons.cloud_off, size: 15, color: Colors.orange),
                 SizedBox(width: 6),
-                Text('Offline mode — result not synced',
-                    style: TextStyle(fontSize: 12, color: Colors.orange)),
+                Text(
+                  'Offline mode — result not synced',
+                  style: TextStyle(fontSize: 12, color: Colors.orange),
+                ),
               ],
             ),
           ),
@@ -264,7 +324,9 @@ class _HomeScreenState extends State<HomeScreen> {
             foregroundColor: _red,
             side: const BorderSide(color: _red),
             padding: const EdgeInsets.symmetric(vertical: 13),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
           ),
         ),
       ],
@@ -272,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _modelCard(String title, ModelResult r) {
-    final idx   = _labels.indexOf(r.prediction);
+    final idx = _labels.indexOf(r.prediction);
     final color = idx >= 0 ? _colors[idx] : Colors.grey;
     final emoji = idx >= 0 ? _emojis[idx] : '❓';
 
@@ -284,34 +346,52 @@ class _HomeScreenState extends State<HomeScreen> {
         border: Border.all(color: color.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8, offset: const Offset(0, 2)),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          Row(children: [
-            Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-            const Spacer(),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(20),
+          Row(
+            children: [
+              Text(
+                title,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
-              child: Text('$emoji ${r.prediction}',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: color)),
-            ),
-          ]),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '$emoji ${r.prediction}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                  ),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 14),
 
           // Probability bars
           ..._labels.asMap().entries.map((e) {
-            final val = e.key == 0 ? r.probabilities.unripe
-                      : e.key == 1 ? r.probabilities.ripe
-                      : r.probabilities.overripe;
+            final val = e.key == 0
+                ? r.probabilities.unripe
+                : e.key == 1
+                ? r.probabilities.ripe
+                : r.probabilities.overripe;
             return Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: _bar(e.value, val, _colors[e.key]),
@@ -322,10 +402,18 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('${(r.confidence * 100).toStringAsFixed(1)}% confidence',
-                  style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.bold)),
-              Text('${r.latencyMs.toStringAsFixed(2)} ms',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              Text(
+                '${(r.confidence * 100).toStringAsFixed(1)}% confidence',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                '${r.latencyMs.toStringAsFixed(2)} ms',
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
             ],
           ),
         ],
@@ -340,9 +428,18 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
-            Text('${(value * 100).toStringAsFixed(1)}%',
-                style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.w600)),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 11, color: Colors.grey),
+            ),
+            Text(
+              '${(value * 100).toStringAsFixed(1)}%',
+              style: TextStyle(
+                fontSize: 11,
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 3),

@@ -6966,14 +6966,14 @@ List<double> score(List<double> input) {
     return mulVectorNumber(addVectors(addVectors(addVectors(addVectors(addVectors(addVectors(addVectors(addVectors(addVectors(addVectors(addVectors(addVectors(addVectors(addVectors(addVectors(addVectors(addVectors(addVectors(addVectors(var0, var1), var2), var3), var4), var5), var6), var7), var8), var9), var10), var11), var12), var13), var14), var15), var16), var17), var18), var19), 0.05);
 }
 List<double> addVectors(List<double> v1, List<double> v2) {
-    List<double> result = new List<double>.filled(v1.length, 0.0);
+    List<double> result = List<double>.filled(v1.length, 0.0);
     for (int i = 0; i < v1.length; i++) {
         result[i] = v1[i] + v2[i];
     }
     return result;
 }
 List<double> mulVectorNumber(List<double> v1, double num) {
-    List<double> result = new List<double>.filled(v1.length, 0.0);
+    List<double> result = List<double>.filled(v1.length, 0.0);
     for (int i = 0; i < v1.length; i++) {
         result[i] = v1[i] * num;
     }

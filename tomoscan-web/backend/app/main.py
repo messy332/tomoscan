@@ -17,7 +17,6 @@ try:
 except Exception as e:
     import logging
     logging.warning(f"Could not create tables at startup: {e}")
-Base.metadata.create_all(bind=engine)
 
 limiter = Limiter(key_func=get_remote_address)
 
@@ -42,7 +41,8 @@ app.add_middleware(
 
 @app.exception_handler(Exception)
 async def generic_exception_handler(request: Request, exc: Exception):
-    """Never leak stack traces to clients."""
+    import logging
+    logging.error(f"Unhandled exception on {request.method} {request.url}: {exc}", exc_info=True)
     return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 
